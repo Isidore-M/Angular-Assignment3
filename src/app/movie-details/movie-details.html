@@ -1,0 +1,93 @@
+
+
+@if (selectedMovie()) {
+<div class="details-wrapper" [style.backgroundImage]="'url(' + selectedMovie()?.posterUrl + ')'">
+
+  <div class="content-overlay">
+
+    <nav class="top-nav">
+      <button class="pill-btn" routerLink="/">
+        <i class="bi bi-arrow-left"></i> Back to Home
+      </button>
+    </nav>
+
+    <main class="movie-info">
+      <h1 class="title-fade">{{ selectedMovie()?.title }}</h1>
+
+      <p class="plot-fade">
+        {{ selectedMovie()?.plot }}
+      </p>
+
+      <div class="metadata plot-fade">
+        <span class="year"><i class="bi bi-calendar-date"></i> {{ selectedMovie()?.releaseYear }}</span>
+        <span class="genre"><i class="bi bi-film"></i> {{ selectedMovie()?.genres?.[0] }}</span>
+       <span class="duration"> <i class="bi bi-clock-history"></i> {{ selectedMovie()?.duration }} min</span>
+      </div>
+
+      <footer class="action-footer plot-fade">
+        <button class="icon-only-btn" (click)="detailsService.deleteMovie(selectedMovie()!.id)">
+          <i class="bi bi-trash3"></i>
+        </button>
+        <button class="icon-only-btn">
+          <i class="bi bi-heart"></i>
+        </button>
+        <button class="edit-circle" (click)="openEditModal()">
+  <i class="bi bi-pencil-fill"></i>
+</button>
+      </footer>
+    </main>
+
+  </div>
+</div>
+} @else {
+  <div class="not-found">
+    <p>Movie not found... 🔍</p>
+    <button routerLink="/">Return to Home</button>
+  </div>
+}
+
+@if (isEditModalOpen()) {
+<div class="modal-backdrop" (click)="closeModal()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+
+    <header class="modal-header">
+      <h2 style="color: black;">Edit Details</h2>
+      <button class="close-btn" (click)="closeModal()">&times;</button>
+    </header>
+
+    <div class="modal-body">
+      <div class="input-group">
+        <label>Title</label>
+        <input type="text" [(ngModel)]="editForm.title" class="form-input">
+      </div>
+
+      <div class="row">
+        <div class="input-group">
+          <label>Year</label>
+          <input type="number" [(ngModel)]="editForm.releaseYear" class="form-input">
+        </div>
+        <div class="input-group">
+          <label>Genre</label>
+          <input type="text" [(ngModel)]="editForm.genre" class="form-input">
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Cast</label>
+        <input type="text" [(ngModel)]="editForm.cast" class="form-input">
+      </div>
+
+      <div class="input-group">
+        <label>Plot</label>
+        <textarea [(ngModel)]="editForm.plot" class="form-input" rows="5"></textarea>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-outline" (click)="closeModal()">Cancel</button>
+        <button class="btn-solid" (click)="saveChanges()">Update Movie</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+}

@@ -1,0 +1,118 @@
+<div class="page-container">
+  <header class="hero">
+    <div class="logo"> <i class="bi bi-bluesky"></i>  cine<span>club</span></div>
+    <h1>Your Front Row Seat to <span>Simply Great</span>  Cinema.</h1>
+    <p>Join the club where every story matters. Discover, catalog, and share your favorite films with a global community of creators.</p>
+  </header>
+
+  <div class="controls">
+    <div class="left-actions">
+      <button
+  class="btn-outline"
+  (click)="toggleFilter()"
+  [class.active-filter]="showOnlyFavorites()">
+
+  {{ showOnlyFavorites() ? 'Showing Liked' : 'Show Favorites' }}
+  <i class="bi" [class.bi-heart-fill]="showOnlyFavorites()" [class.bi-heart]="!showOnlyFavorites()"></i>
+</button>
+      <button class="btn-solid" (click)="openCreateModal()">
+        Add Movie <i class="bi bi-plus-lg ms-1"></i>
+      </button>
+    </div>
+
+ @if (isCreateModalOpen()) {
+<div class="modal-backdrop" (click)="closeCreateModal()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+
+    <header class="modal-header">
+      <h2>Add New Movie</h2>
+    </header>
+
+    <div class="modal-body">
+      <div class="input-group">
+        <label>Movie Title</label>
+        <input type="text" [(ngModel)]="newMovie.title" placeholder="e.g. Inception" class="form-input">
+      </div>
+
+      <div class="row">
+        <div class="input-group">
+          <label>Released Year</label>
+          <input type="number" [(ngModel)]="newMovie.releaseYear" class="form-input">
+        </div>
+        <div class="input-group">
+          <label>Genre</label>
+          <input type="text" [(ngModel)]="newMovie.genre" placeholder="Action, Sci-Fi" class="form-input">
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Cast (separated by commas)</label>
+        <input type="text" [(ngModel)]="newMovie.cast" placeholder="Leonardo DiCaprio, Ellen Page" class="form-input">
+      </div>
+
+      <div class="input-group">
+        <label>Story Plot</label>
+        <textarea [(ngModel)]="newMovie.plot" placeholder="Briefly describe the movie..." class="form-input" rows="4"></textarea>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-outline" (click)="closeCreateModal()">Cancel</button>
+        <button class="btn-solid" (click)="saveMovie()">Save Movie</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+}
+
+    <div class="search-box">
+      <input type="text" placeholder="Search...">
+      <i class="bi bi-search search-icon"></i>
+    </div>
+  </div>
+
+  <div class="movie-grid">
+    @if (filteredMovies().length > 0) {
+    @for (movie of filteredMovies(); track movie.id) {
+      <div class="movie-card">
+        <img [src]="movie.posterUrl" class="card-img">
+
+        <div class="card-overlay">
+          <div class="text-group">
+            <h3>{{ movie.title }}</h3>
+            <p class="plot">{{ movie.plot | slice:0:100 }}...</p>
+          </div>
+
+          <div class="card-footer">
+            <div class="meta">
+              <span>{{ movie.releaseYear }}</span>
+              <span class="ms-2">{{ movie.genres[0] }}</span>
+            </div>
+
+            <div class="icons">
+              <button (click)="myservice.toggleFavorite(movie.id)" class="icon-btn">
+                <i class="bi" [class.bi-heart-fill]="movie.isFavorite" [class.bi-heart]="!movie.isFavorite"></i>
+              </button>
+              <button (click)="myservice.deleteMovie(movie.id)" class="icon-btn">
+                <i class="bi bi-trash3"></i>
+              </button>
+
+              <button [routerLink]="['/movie', movie.id]" class="details-btn">View details</button>            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+  }
+  @else {
+    <div class="empty-favorites">
+      <i class="bi bi-heartbreak"></i>
+      <h2>No favorites yet!</h2>
+      <p>Click the ❤️ on any movie to add it to your collection.</p>
+      <button class="btn-solid" (click)="toggleFilter()">
+        View All Movies
+      </button>
+    </div>
+  }
+  </div>
+</div>
