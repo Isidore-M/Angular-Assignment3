@@ -106,7 +106,7 @@
   }
   @else {
     <div class="empty-favorites">
-      <i class="bi bi-heartbreak"></i>
+      <img src="../../../public/movies/nofav.jpg" alt="">
       <h2>No favorites yet!</h2>
       <p>Click the ❤️ on any movie to add it to your collection.</p>
       <button class="btn-solid" (click)="toggleFilter()">
@@ -115,4 +115,7 @@
     </div>
   }
   </div>
+</div>
+<div style="background: yellow; color: black; padding: 10px; z-index: 9999; position: relative;">
+  DEBUG: Number of movies found: {{ (myservice.allMovies() || []).length }}
 </div>

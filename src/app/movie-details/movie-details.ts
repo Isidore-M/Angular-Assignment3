@@ -63,6 +63,7 @@ export class MovieDetails {
 
       this.movieService.updateMovie(movie.id, updatedData);
       this.isEditModalOpen.set(false);
+       alert('Movie Updated! 📝');
     }
 
     closeModal() {

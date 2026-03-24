@@ -33,25 +33,27 @@ export class MovieCreateComponent {
   newPlot = '';
 
   create() {
-    if (!this.newTitle) return;
+  // 1. Validation (Same as before)
+  if (!this.newTitle) return;
 
-    const freshMovie: Movie = {
-      id: Date.now(),
-      title: this.newTitle,
-      releaseYear: this.newYear,
-      plot: this.newPlot,
-      isFavorite: false,
-      cast: [],
-      genres: ["Action"], // Default genre
-      duration: 120,
-      posterUrl: 'movies/lucy.jpg' // Using your public folder logic
-    };
+  const freshMovie: Movie = {
+    id: Date.now().toString(),   // 👈 FIX 1: Must be a string for JSON Server
+    title: this.newTitle,
+    releaseYear: this.newYear,
+    plot: this.newPlot,
+    isFavorite: false,
+    cast: [],
+    genres: ["Action"],
+    duration: 120,
+    posterUrl: 'movies/lucy.jpg'
+  };
 
-    this.movieService.addMovie(freshMovie);
+  // 2. Save via Service
+  this.movieService.addMovie(freshMovie);
 
-    // 3. Instead of navigate, we emit the close event
-    this.close.emit();
-  }
+  // 3. Close the Modal (Great use of Output/EventEmitter!)
+  this.close.emit();
+}
 
   cancel() {
     this.close.emit();

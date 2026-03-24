@@ -1,126 +1,89 @@
-import { Component, inject,signal,computed } from '@angular/core';
-import { MovieService } from '../Services/movie-service';
+import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { MovieService } from '../Services/movie-service';
+import { Movie } from '../Interfaces/movie';
 
 @Component({
   selector: 'app-movie',
   standalone: true,
-  imports: [CommonModule, RouterLink,FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './movie-component.html',
-  styleUrl: './movie-component.css',
+  styleUrl: './movie-component.css'
 })
 export class MovieComponent {
   myservice = inject(MovieService);
-  showOnlyFavorites = signal(false);
-  filteredMovies = computed(() => {
-    const all = this.myservice.allMovies();
-    const onlyFavs = this.showOnlyFavorites();
 
-    if (onlyFavs) {
-      return all.filter(movie => movie.isFavorite);
+  // 1. Controls
+  showOnlyFavorites = signal(false);
+  isCreateModalOpen = signal(false);
+
+  // 2. Form for New Movie (Standard JS object values)
+  newMovie = {
+
+    title: '',
+    releaseYear: 2026,
+    genre: '',
+    cast: '',
+    plot: ''
+  };
+
+  // 3. The Filter Logic (Reactive & Safe)
+  filteredMovies = computed(() => {
+    const all = this.myservice.allMovies() || [];
+
+    if (this.showOnlyFavorites()) {
+      return all.filter(m => m.isFavorite);
     }
     return all;
   });
 
-
-toggleFilter() {
+  toggleFilter() {
     this.showOnlyFavorites.update(val => !val);
   }
 
-  isCreateModalOpen = signal(false);
-
-   openCreateModal() {
+  // --- Modal Logic ---
+  openCreateModal() {
     this.isCreateModalOpen.set(true);
   }
 
-
   closeCreateModal() {
     this.isCreateModalOpen.set(false);
+    this.resetForm();
   }
-newMovie = {
-    title: '',
-    releaseYear: 2026,
-    cast:'',
-    genre:'',
-    plot: '',
-    duration:120,
-    posterUrl: "movies/default.jpg",
+
+ saveMovie() {
+  if (!this.newMovie.title.trim()) {
+    alert('Please enter a movie title');
+    return;
+  }
+
+  const fresh: Movie = {
+    id: Date.now().toString(),
+    title: this.newMovie.title,
+    releaseYear: this.newMovie.releaseYear,
+    plot: this.newMovie.plot,
+    cast: this.newMovie.cast ? this.newMovie.cast.split(',').map(s => s.trim()) : [],
+    genres: [this.newMovie.genre || 'General'],
+    isFavorite: false,
+    duration: 120,
+    posterUrl: 'movies/default.jpg'
   };
 
-  saveMovie() {
+  this.myservice.addMovie(fresh);
 
-    console.log('Saving:', this.newMovie);
-    this.myservice.addMovie({
-      ...this.newMovie,
-      id: Date.now(),
-      isFavorite: false,
-      cast: [],
-      genres: ["Action"],
-      duration: 120
-    });
-    this.newMovie = { title: '', releaseYear: 2026, plot: '',cast:'',
-    genre:'',duration:120,
-      posterUrl:"movies/default.jpg"
-  };
-  this.closeCreateModal();
-
-  }
-
-  isEditModalOpen = signal(false);
-  editingMovieId = signal<number | null>(null);
-
-  editForm = {
-    title: '',
-    releaseYear: 2026,
-    cast: '',
-    genre: '',
-    plot: ''
-  };
-
-  openEditModal(movie: any) {
-    this.editingMovieId.set(movie.id);
-    this.editForm = {
-      title: movie.title,
-      releaseYear: movie.releaseYear,
-      cast: movie.cast.join(', '),
-      genre: movie.genres[0] || '',
-      plot: movie.plot
-    };
-    this.isEditModalOpen.set(true);
-  }
-
-  updateMovie() {
-    const id = this.editingMovieId();
-    if (!id) return;
-
-    const updatedData = {
-      title: this.editForm.title,
-      releaseYear: this.editForm.releaseYear,
-      plot: this.editForm.plot,
-      cast: this.editForm.cast.split(',').map(s => s.trim()),
-      genres: [this.editForm.genre]
-    };
-
-    this.myservice.updateMovie(id, updatedData);
-    this.closeEditModal();
-  }
-
-  closeEditModal() {
-    this.isEditModalOpen.set(false);
-    this.editingMovieId.set(null);
-  }
-
-
-
+  this.closeCreateModal(); // This already calls resetForm() if you used the previous code!
 }
 
+  private resetForm() {
+    this.newMovie = {
 
-
-
-
-
-
-
-
+      title: '',
+      releaseYear: 2026,
+      genre: '',
+      cast: '',
+      plot: ''
+    };
+  }
+}
