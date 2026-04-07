@@ -4,7 +4,7 @@
       "id": "1",
       "title": "Lucy",
       "releaseYear": 2014,
-      "isFavorite": false,
+      "isFavorite": true,
       "cast": [
         "Scarlett Johansson",
         "Morgan Freeman"
@@ -19,7 +19,7 @@
     },
     {
       "id": "3",
-      "title": "Spirited Away",
+      "title": "Spirited Away 2",
       "releaseYear": 2001,
       "isFavorite": false,
       "cast": [
@@ -27,8 +27,7 @@
         "Miyu Irino"
       ],
       "genres": [
-        "Animation",
-        "Adventure"
+        "Animation"
       ],
       "duration": 125,
       "plot": "During her family's move to the suburbs, a sullen 10-year-old girl wanders into a world ruled by gods, witches, and spirits, and where humans are changed into beasts. She must work in a magical bathhouse to find a way to free herself and her parents.",

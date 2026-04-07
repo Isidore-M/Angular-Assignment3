@@ -1,5 +1,3 @@
-
-
 @if (selectedMovie()) {
 <div class="details-wrapper" [style.backgroundImage]="'url(' + selectedMovie()?.posterUrl + ')'">
 
@@ -19,75 +17,87 @@
       </p>
 
       <div class="metadata plot-fade">
-        <span class="year"><i class="bi bi-calendar-date"></i> {{ selectedMovie()?.releaseYear }}</span>
-        <span class="genre"><i class="bi bi-film"></i> {{ selectedMovie()?.genres?.[0] }}</span>
-       <span class="duration"> <i class="bi bi-clock-history"></i> {{ selectedMovie()?.duration }} min</span>
+        <span><i class="bi bi-calendar-date"></i> {{ selectedMovie()?.releaseYear }}</span>
+        <span><i class="bi bi-film"></i> {{ selectedMovie()?.genres?.[0] }}</span>
+        <span><i class="bi bi-clock-history"></i> {{ selectedMovie()?.duration }} min</span>
+      </div>
+
+      <div class="cast-section plot-fade" style="margin: 20px 0; color: rgba(255,255,255,0.8);">
+        <small style="display: block; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">Starring</small>
+        <p style="font-weight: 500;">{{ selectedMovie()?.cast?.join(', ') }}</p>
       </div>
 
       <footer class="action-footer plot-fade">
-        <button class="icon-only-btn" (click)="detailsService.deleteMovie(selectedMovie()!.id)">
+        <button class="icon-only-btn trash" (click)="deleteThisMovie()" title="Delete Movie">
           <i class="bi bi-trash3"></i>
         </button>
-        <button class="icon-only-btn">
-          <i class="bi bi-heart"></i>
+
+        <button class="icon-only-btn heart" (click)="toggleLike()" [class.liked]="selectedMovie()?.isFavorite">
+          <i class="bi" [ngClass]="selectedMovie()?.isFavorite ? 'bi-heart-fill' : 'bi-heart'"></i>
         </button>
-        <button class="edit-circle" (click)="openEditModal()">
-  <i class="bi bi-pencil-fill"></i>
-</button>
+
+        <button class="edit-circle" (click)="openEditModal()" title="Edit Details">
+          <i class="bi bi-pencil-fill"></i>
+        </button>
       </footer>
     </main>
 
   </div>
 </div>
-} @else {
-  <div class="not-found">
-    <p>Movie not found... 🔍</p>
-    <button routerLink="/">Return to Home</button>
-  </div>
-}
 
 @if (isEditModalOpen()) {
 <div class="modal-backdrop" (click)="closeModal()">
   <div class="modal-card" (click)="$event.stopPropagation()">
 
     <header class="modal-header">
-      <h2 style="color: black;">Edit Details</h2>
+      <h2 style="color: #1a1a1a; margin: 0;">Edit Movie Details</h2>
       <button class="close-btn" (click)="closeModal()">&times;</button>
     </header>
 
-    <div class="modal-body">
+    <div class="modal-body" style="padding-top: 20px;">
       <div class="input-group">
         <label>Title</label>
         <input type="text" [(ngModel)]="editForm.title" class="form-input">
       </div>
 
-      <div class="row">
-        <div class="input-group">
+      <div class="row" style="display: flex; gap: 15px;">
+        <div class="input-group" style="flex: 1;">
           <label>Year</label>
           <input type="number" [(ngModel)]="editForm.releaseYear" class="form-input">
         </div>
-        <div class="input-group">
+        <div class="input-group" style="flex: 1;">
           <label>Genre</label>
           <input type="text" [(ngModel)]="editForm.genre" class="form-input">
         </div>
       </div>
 
       <div class="input-group">
-        <label>Cast</label>
+        <label>Cast (Comma separated)</label>
         <input type="text" [(ngModel)]="editForm.cast" class="form-input">
       </div>
 
       <div class="input-group">
-        <label>Plot</label>
-        <textarea [(ngModel)]="editForm.plot" class="form-input" rows="5"></textarea>
+        <label>Plot Summary</label>
+        <textarea [(ngModel)]="editForm.plot" class="form-input" rows="4"></textarea>
       </div>
 
-      <div class="modal-actions">
+      <div class="modal-actions" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
         <button class="btn-outline" (click)="closeModal()">Cancel</button>
-        <button class="btn-solid" (click)="saveChanges()">Update Movie</button>
+        <button class="btn-solid" (click)="saveChanges()" style="background-color: #7df9b1; color: #1a1a1a; border: none; padding: 10px 25px; border-radius: 50px; font-weight: 600; cursor: pointer;">
+          Update Movie
+        </button>
       </div>
     </div>
 
   </div>
 </div>
+}
+
+} @else {
+  <div class="not-found">
+    <div class="not-found-card">
+      <p>Movie not found... 🔍</p>
+      <button class="btn-solid" routerLink="/">Return to Home</button>
+    </div>
+  </div>
 }
