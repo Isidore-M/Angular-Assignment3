@@ -17,11 +17,10 @@ export class MovieComponent {
 
   // 1. Controls
   showOnlyFavorites = signal(false);
+  searchQuery = signal(''); // 👈 NEW: Signal to track search text
   isCreateModalOpen = signal(false);
 
-  // 2. Form for New Movie (Standard JS object values)
   newMovie = {
-
     title: '',
     releaseYear: 2026,
     genre: '',
@@ -29,61 +28,64 @@ export class MovieComponent {
     plot: ''
   };
 
-  // 3. The Filter Logic (Reactive & Safe)
+  // 2. Updated Filter Logic (Combines Search + Favorites)
   filteredMovies = computed(() => {
-    const all = this.myservice.allMovies() || [];
+    let movies = this.myservice.allMovies() || [];
+    const search = this.searchQuery().toLowerCase().trim();
 
-    if (this.showOnlyFavorites()) {
-      return all.filter(m => m.isFavorite);
+    // First: Filter by search text (Title or Genre)
+    if (search) {
+      movies = movies.filter(m =>
+        m.title.toLowerCase().includes(search) ||
+        m.genres.some(g => g.toLowerCase().includes(search))
+      );
     }
-    return all;
+
+    // Second: Filter by favorites
+    if (this.showOnlyFavorites()) {
+      movies = movies.filter(m => m.isFavorite);
+    }
+
+    return movies;
   });
+
+  // 3. New method to update the search signal
+  onSearch(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.searchQuery.set(input.value);
+  }
 
   toggleFilter() {
     this.showOnlyFavorites.update(val => !val);
   }
 
   // --- Modal Logic ---
-  openCreateModal() {
-    this.isCreateModalOpen.set(true);
+  openCreateModal() { this.isCreateModalOpen.set(true); }
+  closeCreateModal() { this.isCreateModalOpen.set(false); this.resetForm(); }
+
+  saveMovie() {
+    if (!this.newMovie.title.trim()) {
+      alert('Please enter a movie title');
+      return;
+    }
+
+    const fresh: Movie = {
+      id: Date.now().toString(),
+      title: this.newMovie.title,
+      releaseYear: this.newMovie.releaseYear,
+      plot: this.newMovie.plot,
+      cast: this.newMovie.cast ? this.newMovie.cast.split(',').map(s => s.trim()) : [],
+      genres: [this.newMovie.genre || 'General'],
+      isFavorite: false,
+      duration: 120,
+      posterUrl: 'movies/default.jpg'
+    };
+
+    this.myservice.addMovie(fresh);
+    this.closeCreateModal();
   }
-
-  closeCreateModal() {
-    this.isCreateModalOpen.set(false);
-    this.resetForm();
-  }
-
- saveMovie() {
-  if (!this.newMovie.title.trim()) {
-    alert('Please enter a movie title');
-    return;
-  }
-
-  const fresh: Movie = {
-    id: Date.now().toString(),
-    title: this.newMovie.title,
-    releaseYear: this.newMovie.releaseYear,
-    plot: this.newMovie.plot,
-    cast: this.newMovie.cast ? this.newMovie.cast.split(',').map(s => s.trim()) : [],
-    genres: [this.newMovie.genre || 'General'],
-    isFavorite: false,
-    duration: 120,
-    posterUrl: 'movies/default.jpg'
-  };
-
-  this.myservice.addMovie(fresh);
-
-  this.closeCreateModal(); // This already calls resetForm() if you used the previous code!
-}
 
   private resetForm() {
-    this.newMovie = {
-
-      title: '',
-      releaseYear: 2026,
-      genre: '',
-      cast: '',
-      plot: ''
-    };
+    this.newMovie = { title: '', releaseYear: 2026, genre: '', cast: '', plot: '' };
   }
 }

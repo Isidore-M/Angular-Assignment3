@@ -19,7 +19,6 @@ export class MovieService {
   fetchMovies() {
     this.http.get<Movie[]>(this.apiUrl).subscribe({
       next: (data) => {
-        console.log('✅ Movies received from server:', data);
         this.moviesSignal.set(data);
       },
       error: (err) => {

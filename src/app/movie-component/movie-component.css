@@ -57,26 +57,6 @@
   margin-left: 10px;
 }
 
-.search-box {
-  position: relative;
-  width: 300px;
-}
-
-.search-box input {
-  width: 100%;
-  padding: 12px 40px 12px 20px;
-  border-radius: 30px;
-  border: 1px solid #eee;
-  background: #f8f9fa;
-}
-
-.search-icon {
-  position: absolute;
-  right: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #888;
-}
 
 .movie-grid {
   display: grid;
@@ -224,6 +204,23 @@
   animation: fadeIn 0.2s ease-out;
 }
 
+.left-actions{
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  justify-items: center;
+  align-items: center;
+}
+
+.movie-count{
+  width: auto;
+  height: fit-content;
+  border: solid 1.5px #000;
+  padding: 0.6rem 0.9rem;
+  border-radius: 50px;
+  background: #282828;
+  color: #fff;
+}
 
 /* ===========Create a movie modal ======== */
 
@@ -354,4 +351,59 @@
   margin-top: 30px;
   padding-top: 20px;
   border-top: 1px solid #eee;
+}
+.search-box {
+  position: relative; /* This is the 'anchor' */
+  display: flex;
+  align-items: center;
+  min-width: 300px;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 12px 40px 12px 45px; /* Left padding for search, right for X */
+  border-radius: 50px;
+  border: 1px solid #e0e0e0;
+  background: #f9f9f9;
+  transition: all 0.2s;
+}
+
+/* Fix the Search Icon (Left side) */
+.search-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%); /* Perfectly centers vertically */
+  color: #888;
+  pointer-events: none; /* Mouse clicks go through to the input */
+  z-index: 2;
+}
+
+/* Fix the X Button (Right side) */
+.clear-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.clear-btn:hover {
+  color: #333;
+}
+
+/* Focus State */
+.search-box input:focus {
+  background: #fff;
+  border-color: #7df9b1;
+  box-shadow: 0 0 0 4px rgba(125, 249, 177, 0.1);
+  outline: none;
 }

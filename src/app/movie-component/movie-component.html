@@ -11,13 +11,14 @@
   class="btn-outline"
   (click)="toggleFilter()"
   [class.active-filter]="showOnlyFavorites()">
-
   {{ showOnlyFavorites() ? 'Showing Liked' : 'Show Favorites' }}
   <i class="bi" [class.bi-heart-fill]="showOnlyFavorites()" [class.bi-heart]="!showOnlyFavorites()"></i>
 </button>
       <button class="btn-solid" (click)="openCreateModal()">
         Add Movie <i class="bi bi-plus-lg ms-1"></i>
       </button>
+
+      <div class="movie-count">  Movies Count : {{ (myservice.allMovies() || []).length }}</div>
     </div>
 
  @if (isCreateModalOpen()) {
@@ -65,10 +66,22 @@
 </div>
 }
 
-    <div class="search-box">
-      <input type="text" placeholder="Search...">
-      <i class="bi bi-search search-icon"></i>
-    </div>
+  <div class="search-box">
+  <i class="bi bi-search search-icon"></i>
+
+  <input
+    type="text"
+    placeholder="Search movies..."
+    (input)="onSearch($event)"
+    [value]="searchQuery()">
+
+ @if (searchQuery()) {
+      <button (click)="searchQuery.set('')" class="clear-btn" title="Clear search">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    }
+</div>
+
   </div>
 
   <div class="movie-grid">
@@ -116,6 +129,4 @@
   }
   </div>
 </div>
-<div style="background: yellow; color: black; padding: 10px; z-index: 9999; position: relative;">
-  DEBUG: Number of movies found: {{ (myservice.allMovies() || []).length }}
-</div>
+
